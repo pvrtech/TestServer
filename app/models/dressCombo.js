@@ -4,10 +4,9 @@ var bcrypt   = require('bcrypt-nodejs');
 
 // define the schema for our Combo Dress model
 var comboDressSchema = mongoose.Schema({
-    comboid		 : String,
     type         : Array,
     userid       : String,
-    dressid      : String,
+    dressids     : Array,
     events       : Array
 });
 
