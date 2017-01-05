@@ -1,4 +1,6 @@
 var Dress       = require('../app/models/dress');
+var DressCombo = require('../app/models/dressCombo');
+var RecentDress = require('../app/models/recentDress');
 
 module.exports = function(app, passport, jwt) {
 // normal routes ===============================================================
@@ -26,9 +28,8 @@ module.exports = function(app, passport, jwt) {
         });
     });
 
-    // DRESS SECTION =======================
     app.post('/dress', isLoggedIn, function(req, res) {
-        var newdress = new Dress({name:req.body.name, type:req.body.type, userid: req.body.userid, events:req.body.events});
+        var newdress = new Dress({name: req.body.name, type: req.body.type, userid: req.body.userid, events: req.body.events});
         newdress.save(function(err){
             if (err)
                 return next();
@@ -44,6 +45,40 @@ module.exports = function(app, passport, jwt) {
         //     })
         // });
     });
+
+    app.delete('/dress', isLoggedIn, function(req, res) {
+        Dress.delete({userid: req.user._id}, function(err, dress){
+            if (err)
+                return next();
+            res.send({
+                dresses: dress
+            })
+        });
+    });
+
+    app.post('/selectdress', isLoggedIn, function(req, res){
+        var today = new Date();
+        var newdress = new RecentDress({userid: req.body.userid, dressid: req.body.dressid, comboid: req.body.comboid, events: req.body.events, lastweardate: today});
+        newdress.save(function(err){
+            if (err)
+                return next();
+            res.send({
+                dress: "added"
+            })
+        });
+    });
+
+    app.post('/createcombo', isLoggedIn, function(req, res){
+        var today = new Date();
+        var newdress = new DressCombo({userid: req.body.userid, dressid: req.body.dressid, comboid: req.body.comboid, events: req.body.events, type: req.body.type});
+        newdress.save(function(err){
+            if (err)
+                return next();
+            res.send({
+                dress: "added"
+            })
+        });
+    })
 
     // LOGOUT ==============================
     app.get('/logout', isLoggedIn, function(req, res) {
